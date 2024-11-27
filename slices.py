@@ -225,7 +225,7 @@ def buildTriangles( slice0, slice1 ):
 
     minArea = [slice0.verts][slice1.verts] # CHANGE THIS
     minDir  = [Dir.PREV_ROW][Dir.PREV_COL] # CHANGE THIS
-
+    visitedIndex = set()
 
     # Fill in the minArea array
 
@@ -236,10 +236,11 @@ def buildTriangles( slice0, slice1 ):
     #
     # [2 marks]
 
-    for i in range(1, len(slice1)):
+    for i in range(len(slice1)):
         minArea[0][i] = False
         # Each element from the same row but different columns
         minDir[0][i] = [1][0]
+        visitedIndex.add([0][i])
 
     # [YOUR CODE HERE]
 
@@ -249,10 +250,11 @@ def buildTriangles( slice0, slice1 ):
     #
     # [2 marks]
 
-    for i in range(1, len(slice0)):
+    for i in range(len(slice0)):
         minArea[i][0] = False
         # Each element from the same column but different rows
         minDir[i][0] = [0][1]
+        visitedIndex.add([i][0])
 
     # [YOUR CODE HERE]
 
@@ -262,6 +264,10 @@ def buildTriangles( slice0, slice1 ):
     # conditions are checked.
     #
     # [2 marks]
+    # Check if entry is in visited set; if not, compute entry
+
+
+
 
 
     # [YOUR CODE HERE]
