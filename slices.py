@@ -167,10 +167,18 @@ def buildTriangles( slice0, slice1 ):
     #
     # This can be done with "brute force" if you wish.
     #
-    # [1 mark] 
+    # [1 mark]
 
+    # To find the closest pair of vertices, iterate over both and find the minimum distance
+    minVerts = [slice0.verts[0], slice1.verts[0]]
+    for vertTop in slice0.verts:
+        for vertBot in slice1.verts:
+            if length(subtract(vertTop, vertBot)) < length(subtract(minVerts[0], minVerts[1])):
+                minVerts = [vertTop, vertBot]
 
     # [YOUR CODE HERE]
+    minV0 = minVerts[0]
+    minV1 = minVerts[1]
     #
     # minV0 = ...     # closest vertex on top slice
     # minV1 = ...     # closest vertex on bottom slice
