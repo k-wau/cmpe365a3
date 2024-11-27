@@ -223,10 +223,10 @@ def buildTriangles( slice0, slice1 ):
     # [YOUR CODE HERE]
 
     # Create 2D array of floats for minArea
-    minArea = [[float()] * len(verts0)] # CHANGE THIS
+    minArea = [[float()] * len(verts0) * len(verts1)] # CHANGE THIS
 
     # First index tracks whether the value came from the previous row, second index from the previous column
-    minDir  = [[float()] * len(verts0)] # CHANGE THIS
+    minDir  = [[None] * len(verts0) * len(verts1)] # CHANGE THIS
 
     # Create set of visited entries
     visitedIndex = set()
@@ -241,9 +241,12 @@ def buildTriangles( slice0, slice1 ):
     # [2 marks]
 
     for i in range(len(slice0)):
-        minArea[0][i] = 0
+        if i == 0:
+            minArea[0][i] = 0
+        else:
+            minArea[0][i] = minArea[0][i-1] + triangleArea(verts1[0], verts0[i], verts0[i-1])
         # Each element from the same row but different columns
-        minDir[0][i] = [1][0]
+        minDir[0][i] = 1
         visitedIndex.add([0][i])
 
     # [YOUR CODE HERE]
@@ -255,9 +258,12 @@ def buildTriangles( slice0, slice1 ):
     # [2 marks]
 
     for i in range(len(slice1)):
-        minArea[i][0] = 0
+        if i == 0:
+            minArea[i][0] = 0
+        else:
+            minArea[i][0] = minArea[i-1][0] + triangleArea(verts1[0], verts0[i], verts0[i-1])
         # Each element from the same column but different rows
-        minDir[i][0] = [0][1]
+        minDir[i][0] = 2
         visitedIndex.add([i][0])
 
     # [YOUR CODE HERE]
@@ -274,14 +280,14 @@ def buildTriangles( slice0, slice1 ):
             if [i][j] not in visitedIndex:
                 # Compute minArea and minDir using algorithm from lecture
                 # Take the minimum value of the surrounding entries plus its triangle area
-                # UPDATE VERTEX LIST YOU'RE TAKING FROM
-                minArea[i][j] = min(minArea[i-1][j] + triangleArea(verts0[i], verts0[j], verts0[i-1]),
-                                    minArea[i][j-1] + triangleArea(verts0[i], verts0[j], verts0[j-1]))
+                minArea[i][j] = min(minArea[i-1][j] + triangleArea(verts1[i], verts0[j], verts1[i-1]),
+                                    minArea[i][j-1] + triangleArea(verts1[i], verts0[j], verts0[j-1]))
+                visitedIndex.add([i][j])
                 # Update minDir depending on the value minArea takes
                 if minArea[i][j] == minArea[i-1][j] + triangleArea(verts0[i], verts0[j], verts0[i-1]):
-                    minDir = [0][1]
+                    minDir = 2
                 else:
-                    minDir = [1][0]
+                    minDir = 1
 
     # [YOUR CODE HERE]
 
