@@ -265,6 +265,11 @@ def buildTriangles( slice0, slice1 ):
     #
     # [2 marks]
     # Check if entry is in visited set; if not, compute entry
+    for i in range(len(slice0)):
+        for j in range(len(slice1)):
+            if [i][j] not in visitedIndex:
+                # Compute minArea and minDir using algorithm from lecture
+
 
 
 
