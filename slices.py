@@ -222,9 +222,13 @@ def buildTriangles( slice0, slice1 ):
 
     # [YOUR CODE HERE]
 
+    # Create 2D array of floats for minArea
+    minArea = [[float()] * len(verts0)] # CHANGE THIS
 
-    minArea = [slice0.verts][slice1.verts] # CHANGE THIS
-    minDir  = [Dir.PREV_ROW][Dir.PREV_COL] # CHANGE THIS
+    # First index tracks whether the value came from the previous row, second index from the previous column
+    minDir  = [[float()] * len(verts0)] # CHANGE THIS
+
+    # Create set of visited entries
     visitedIndex = set()
 
     # Fill in the minArea array
@@ -236,8 +240,8 @@ def buildTriangles( slice0, slice1 ):
     #
     # [2 marks]
 
-    for i in range(len(slice1)):
-        minArea[0][i] = False
+    for i in range(len(slice0)):
+        minArea[0][i] = 0
         # Each element from the same row but different columns
         minDir[0][i] = [1][0]
         visitedIndex.add([0][i])
@@ -250,8 +254,8 @@ def buildTriangles( slice0, slice1 ):
     #
     # [2 marks]
 
-    for i in range(len(slice0)):
-        minArea[i][0] = False
+    for i in range(len(slice1)):
+        minArea[i][0] = 0
         # Each element from the same column but different rows
         minDir[i][0] = [0][1]
         visitedIndex.add([i][0])
@@ -269,11 +273,15 @@ def buildTriangles( slice0, slice1 ):
         for j in range(len(slice1)):
             if [i][j] not in visitedIndex:
                 # Compute minArea and minDir using algorithm from lecture
-
-
-
-
-
+                # Take the minimum value of the surrounding entries plus its triangle area
+                # UPDATE VERTEX LIST YOU'RE TAKING FROM
+                minArea[i][j] = min(minArea[i-1][j] + triangleArea(verts0[i].coords, verts0[j].coords,
+                                verts0[i-1].coords), minArea[i][j-1] + triangleArea(verts0[i], verts0[j], verts0[j-1]))
+                # Update minDir depending on the value minArea takes
+                if minArea[i][j] == minArea[i-1][j] + triangleArea(verts0[i], verts0[j], verts0[i-1]):
+                    minDir = [0][1]
+                else:
+                    minDir = [1][0]
 
     # [YOUR CODE HERE]
 
