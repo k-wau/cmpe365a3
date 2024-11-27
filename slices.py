@@ -169,17 +169,6 @@ def buildTriangles( slice0, slice1 ):
     #
     # [1 mark]
 
-    # To find the closest pair of vertices, iterate over both and find the minimum distance
-    minVerts = [slice0.verts[0], slice1.verts[0]]
-    for vertTop in slice0.verts:
-        for vertBot in slice1.verts:
-            if length(subtract(vertTop, vertBot)) < length(subtract(minVerts[0], minVerts[1])):
-                minVerts = [vertTop, vertBot]
-
-    # [YOUR CODE HERE]
-    minV0 = minVerts[0]
-    minV1 = minVerts[1]
-
     # minV0 = ...     # closest vertex on top slice
     # minV1 = ...     # closest vertex on bottom slice
 
@@ -197,7 +186,7 @@ def buildTriangles( slice0, slice1 ):
     #
     # ADD THE FIRST VERTEX TO THE END of the vertices, so that the
     # triangulation ends up on the same edge as it started.
-    
+
     # [1 mark]
 
 
@@ -234,8 +223,8 @@ def buildTriangles( slice0, slice1 ):
     # [YOUR CODE HERE]
 
 
-    minArea = [[None]] # CHANGE THIS
-    minDir  = [[None]] # CHANGE THIS
+    minArea = [slice0.verts][slice1.verts] # CHANGE THIS
+    minDir  = [Dir.PREV_ROW][Dir.PREV_COL] # CHANGE THIS
 
 
     # Fill in the minArea array
@@ -247,6 +236,10 @@ def buildTriangles( slice0, slice1 ):
     #
     # [2 marks]
 
+    for i in range(1, len(slice1)):
+        minArea[0][i] = False
+        # Each element from the same row but different columns
+        minDir[0][i] = [1][0]
 
     # [YOUR CODE HERE]
 
@@ -255,7 +248,11 @@ def buildTriangles( slice0, slice1 ):
     # as there's no col -1 so only one condition is checked.
     #
     # [2 marks]
-    
+
+    for i in range(1, len(slice0)):
+        minArea[i][0] = False
+        # Each element from the same column but different rows
+        minDir[i][0] = [0][1]
 
     # [YOUR CODE HERE]
 
