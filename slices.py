@@ -189,7 +189,7 @@ def buildTriangles( slice0, slice1 ):
     #
     # ADD THE FIRST VERTEX TO THE END of the vertices, so that the
     # triangulation ends up on the same edge as it started.
-    #
+    
     # [1 mark]
 
 
