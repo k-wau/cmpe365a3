@@ -275,8 +275,8 @@ def buildTriangles( slice0, slice1 ):
                 # Compute minArea and minDir using algorithm from lecture
                 # Take the minimum value of the surrounding entries plus its triangle area
                 # UPDATE VERTEX LIST YOU'RE TAKING FROM
-                minArea[i][j] = min(minArea[i-1][j] + triangleArea(verts0[i].coords, verts0[j].coords,
-                                verts0[i-1].coords), minArea[i][j-1] + triangleArea(verts0[i], verts0[j], verts0[j-1]))
+                minArea[i][j] = min(minArea[i-1][j] + triangleArea(verts0[i], verts0[j], verts0[i-1]),
+                                    minArea[i][j-1] + triangleArea(verts0[i], verts0[j], verts0[j-1]))
                 # Update minDir depending on the value minArea takes
                 if minArea[i][j] == minArea[i-1][j] + triangleArea(verts0[i], verts0[j], verts0[i-1]):
                     minDir = [0][1]
