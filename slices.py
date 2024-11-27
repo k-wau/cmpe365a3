@@ -183,6 +183,14 @@ def buildTriangles( slice0, slice1 ):
     # minV0 = ...     # closest vertex on top slice
     # minV1 = ...     # closest vertex on bottom slice
 
+    minDist = length(subtract(slice0[0], slice1[0]))
+    minV0, minV1 = slice0[0], slice1[0]
+
+    for i in slice0:
+        for j in slice1:
+            if minDist > length(subtract(i, j)):
+                minDist = length(subtract(i, j))
+                minV0, minV1 = i, j
 
     # Make a cyclic permutation of the vertices of each slice,
     # that starts at the closest vertex in each slice found above.
@@ -197,6 +205,19 @@ def buildTriangles( slice0, slice1 ):
 
     verts0 = []  # list of top slice vertices
     verts1 = []  # list of bottom slice vertices
+
+    verts0.append(minV0)
+    verts1.append(minV1)
+    currentV0, currentV1 = minV0.next, minV1.next
+    for i in range(max(len(slice0), len(slice1))):
+        if currentV0 != verts0[0]:
+            verts0.append(currentV0)
+            currentV0 = currentV0.next
+        if currentV1 != verts1[0]:
+            verts1.append(currentV1)
+            currentV1 = currentV1.next
+    verts0.append(minV0)
+    verts1.append(minV1)
 
     
     # Set up the 'minArea' array.  The first dimension (rows) of the
