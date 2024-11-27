@@ -179,7 +179,7 @@ def buildTriangles( slice0, slice1 ):
     # [YOUR CODE HERE]
     minV0 = minVerts[0]
     minV1 = minVerts[1]
-    #
+
     # minV0 = ...     # closest vertex on top slice
     # minV1 = ...     # closest vertex on bottom slice
 
