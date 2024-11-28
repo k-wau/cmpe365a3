@@ -285,9 +285,9 @@ def buildTriangles( slice0, slice1 ):
                 visitedIndex.add([i][j])
                 # Update minDir depending on the value minArea takes
                 if minArea[i][j] == minArea[i-1][j] + triangleArea(verts0[i], verts0[j], verts0[i-1]):
-                    minDir = 2
+                    minDir[i][j] = 2
                 else:
-                    minDir = 1
+                    minDir[i][j] = 1
 
     # [YOUR CODE HERE]
 
