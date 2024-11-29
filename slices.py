@@ -71,6 +71,9 @@ class Vertex(object):
 
     def __repr__( self ):
         return 'v%d' % self.id
+    
+    def __getitem__( self, index ):
+        return self.coords[index]
 
   
 # Slice
@@ -90,6 +93,9 @@ class Slice(object):
 
     def __repr__( self ):
         return 's%d' % self.id
+    
+    def __getitem__( self, index ):
+        return self.verts[index]
 
     # Draw this slice
     
@@ -160,7 +166,6 @@ class Dir(enum.Enum): # for storing directions of min-area
     PREV_ROW = 1
     PREV_COL = 2
 
-
 def buildTriangles( slice0, slice1 ):
 
     # Find the closest pair of vertices (one from each slice) to start with.
@@ -172,7 +177,7 @@ def buildTriangles( slice0, slice1 ):
     # minV0 = ...     # closest vertex on top slice
     # minV1 = ...     # closest vertex on bottom slice
 
-    minDist = length(subtract(slice0[0], slice1[0]))
+    minDist = length(subtract(slice0.verts[0], slice1.verts[0]))
     minV0, minV1 = slice0[0], slice1[0]
 
     for i in slice0:
@@ -197,14 +202,14 @@ def buildTriangles( slice0, slice1 ):
 
     verts0.append(minV0)
     verts1.append(minV1)
-    currentV0, currentV1 = minV0.next, minV1.next
-    for i in range(max(len(slice0), len(slice1))):
+    currentV0, currentV1 = minV0.nextV, minV1.nextV
+    for i in range(max(len(slice0.verts), len(slice1.verts))):
         if currentV0 != verts0[0]:
             verts0.append(currentV0)
-            currentV0 = currentV0.next
+            currentV0 = currentV0.nextV
         if currentV1 != verts1[0]:
             verts1.append(currentV1)
-            currentV1 = currentV1.next
+            currentV1 = currentV1.nextV
     verts0.append(minV0)
     verts1.append(minV1)
 
@@ -223,10 +228,10 @@ def buildTriangles( slice0, slice1 ):
     # [YOUR CODE HERE]
 
     # Create 2D array of floats for minArea
-    minArea = [[float()] * len(verts0) * len(verts1)] # CHANGE THIS
+    minArea = [[0.0] * len(verts0)] * len(verts1)
 
     # First index tracks whether the value came from the previous row, second index from the previous column
-    minDir  = [[None] * len(verts0) * len(verts1)] # CHANGE THIS
+    minDir  = [[None] * len(verts0)] * len(verts1)
 
     # Create set of visited entries
     visitedIndex = set()
@@ -240,14 +245,14 @@ def buildTriangles( slice0, slice1 ):
     #
     # [2 marks]
 
-    for i in range(len(slice0)):
+    for i in range(len(verts0)):
         if i == 0:
             minArea[0][i] = 0
         else:
             minArea[0][i] = minArea[0][i-1] + triangleArea(verts1[0], verts0[i], verts0[i-1])
         # Each element from the same row but different columns
         minDir[0][i] = 1
-        visitedIndex.add([0][i])
+        visitedIndex.add((0, j))
 
     # [YOUR CODE HERE]
 
@@ -257,16 +262,22 @@ def buildTriangles( slice0, slice1 ):
     #
     # [2 marks]
 
-    for i in range(len(slice1)):
+    for i in range(len(verts1)):
         if i == 0:
             minArea[i][0] = 0
         else:
-            minArea[i][0] = minArea[i-1][0] + triangleArea(verts1[0], verts0[i], verts0[i-1])
+            minArea[i][0] = minArea[i-1][0] + triangleArea(verts0[0], verts1[i], verts1[i-1])
         # Each element from the same column but different rows
         minDir[i][0] = 2
-        visitedIndex.add([i][0])
+        visitedIndex.add((i, 0))
 
     # [YOUR CODE HERE]
+
+    print()
+    for row in minArea:
+        for elem in row:
+            print(int(elem), end=' ')
+        print()
 
 
     # Fill in the remaining entries of minArea and minDir.  This is
@@ -275,19 +286,18 @@ def buildTriangles( slice0, slice1 ):
     #
     # [2 marks]
     # Check if entry is in visited set; if not, compute entry
-    for i in range(len(slice0)):
-        for j in range(len(slice1)):
-            if [i][j] not in visitedIndex:
-                # Compute minArea and minDir using algorithm from lecture
-                # Take the minimum value of the surrounding entries plus its triangle area
-                minArea[i][j] = min(minArea[i-1][j] + triangleArea(verts1[i], verts0[j], verts1[i-1]),
-                                    minArea[i][j-1] + triangleArea(verts1[i], verts0[j], verts0[j-1]))
-                visitedIndex.add([i][j])
-                # Update minDir depending on the value minArea takes
-                if minArea[i][j] == minArea[i-1][j] + triangleArea(verts0[i], verts0[j], verts0[i-1]):
-                    minDir[i][j] = 2
-                else:
-                    minDir[i][j] = 1
+    for i in range(1, len(verts1)):
+        for j in range(1, len(verts0)):
+            # Compute minArea and minDir using algorithm from lecture
+            # Take the minimum value of the surrounding entries plus its triangle area
+            minArea[i][j] = min(minArea[i-1][j] + triangleArea(verts1[i], verts0[j], verts1[i-1]),
+                                minArea[i][j-1] + triangleArea(verts1[i], verts0[j], verts0[j-1]))
+            visitedIndex.add((i, j))
+            # Update minDir depending on the value minArea takes
+            if minArea[i][j] == minArea[i-1][j] + triangleArea(verts1[i], verts0[j], verts1[i-1]):
+                minDir[i][j] = 2
+            else:
+                minDir[i][j] = 1
 
     # [YOUR CODE HERE]
 
@@ -340,6 +350,29 @@ def buildTriangles( slice0, slice1 ):
     # [3 marks]
 
     triangles = []
+
+    i, j = len(slice1.verts) - 1, len(slice0.verts) - 1
+
+    while (i != 0 and j != 0):
+        listOfThreeVertices = [
+            verts1[0],
+            verts0[j],
+            verts1[i - 1] if (minDir[i][j] == 2) else verts0[j - 1]
+        ]
+        if (minDir[i][j] == 2):
+            i -= 1
+        else:
+            j -= 1
+
+        triangles.append(Triangle(listOfThreeVertices))
+
+    print()
+    for row in minDir:
+        print(row)
+
+    print()
+    for row in minArea:
+        print(row)
 
 
     # [YOUR CODE HERE]
